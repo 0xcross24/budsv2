@@ -3,11 +3,11 @@
 require_once("rabbitmq_required.php");
 require_once('DatabaseQuery.php');
 require_once('APIQuery.php');
-$config = require('config.php');
 
 function requestProcessor($request) {
 	echo "Request received".PHP_EOL;
-	$config = require('config.php');
+	$primary = require('primary.php');
+	$secondary = require('secondary.php');
 
 	$date = date('Y-m-d');
 	$time = date('h:m:sa');
@@ -20,8 +20,24 @@ function requestProcessor($request) {
 
 	try {
 
-		$dbquery = new DatabaseQuery(Connection::connect($config['database'])); // Call the Database class to query from the DATABASE
+		$dbquery = new DatabaseQuery(Connection::connect($primary['database'])); 
 
+
+		// Call the Database class to query from the DATABASE
+
+		$log = "{$date}, {$time}: Successfully connected to the database.";
+		file_put_contents("log.txt", $log.PHP_EOL, FILE_APPEND | LOCK_EX);
+
+	} catch (PDOException $e){
+
+		$log = "{$date}, {$time}: Failed to connect to the database.";
+		file_put_contents("log.txt", $log.PHP_EOL, FILE_APPEND | LOCK_EX);
+
+	}
+
+	try {
+		$dbquery = new DatabaseQuery(Connection::connect($secondary['database']));
+		
 		$log = "{$date}, {$time}: Successfully connected to the database.";
 		file_put_contents("log.txt", $log.PHP_EOL, FILE_APPEND | LOCK_EX);
 

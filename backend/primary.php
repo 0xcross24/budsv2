@@ -7,7 +7,7 @@ return [
 		'dbname' => 'test',
 		'username' => 'root',
 		'password' => 'root',
-		'connection' => 'mysql: host=localhost1'
+		'connection' => 'mysql: host=192.168.1.199'
 
 	]
 ];
